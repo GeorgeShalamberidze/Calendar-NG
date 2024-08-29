@@ -25,23 +25,46 @@ export class CalendarComponent {
     console.log(this.getCalendarStartDate(this.date));
   }
 
-  getCalendarStartDate(date: Date): Date {
+  setMonth = (inc: number) => {
+    const newDate = new Date(this.date);
+    newDate.setMonth(this.date.getMonth() + inc);
+    newDate.setDate(1);
+    // setDate(newDate);
+    // setDateArray(getCalendarDays(date));
+  };
+
+  isSameMonth = (dateVal: Date): boolean => {
+    return dateVal.getMonth() === this.date.getMonth();
+  };
+
+  getCalendarStartDate = (date: Date): Date => {
     const year = date.getFullYear();
     const month = date.getMonth();
-
-    /** Get first day of current month by passing in 3rd option to Date constructor */
     const firstDayOfMonth = new Date(year, month, 1);
 
-    /** Current month's first day index of a week (0-6) */
+    // Calculate the last Sunday before the first day of the current month
     const dayOfWeek = firstDayOfMonth.getDay();
-    console.log('dayofweek: ', dayOfWeek);
-    console.log('firstDayOfMonth: ', firstDayOfMonth.getDate());
+    const lastSunday = new Date(firstDayOfMonth);
 
-    const lastSunday = new Date(dayOfWeek);
-
-    /** Calculate how much days are from previous month to the first day of current month */
     lastSunday.setDate(firstDayOfMonth.getDate() - dayOfWeek);
 
     return lastSunday;
-  }
+  };
+
+  getCalendarDays = (date: Date) => {
+    const calendarStartDate = this.getCalendarStartDate(date);
+
+    return this.rangeFromTo(0, 41).map((num) => {
+      const currentDate = new Date(calendarStartDate);
+      currentDate.setDate(calendarStartDate.getDate() + num);
+      return currentDate;
+    });
+  };
+
+  rangeFromTo = (start: number, end: number) => {
+    if (start >= end) return [];
+
+    const length = end - start + 1;
+    return Array.from({ length }, (_, i) => start + i);
+  };
 }
